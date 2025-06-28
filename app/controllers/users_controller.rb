@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
+
   def new
     @book = Book.new
   end
-
 
   def index
     @users = User.all
@@ -12,22 +12,34 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    @books = Book.joins(:user) 
+    @books = @user.books
     @book = Book.new
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = current_user
   end
 
   def update
-    @user = User.find(params[:id])
-    @user.update(user_params)
-    redirect_to user_path(params[:id])
+    @user = current_user
+
+    if @user.update(user_params)
+      flash[:notice] = "You have updated user successfully."
+      redirect_to user_path(params[:id])
+    else
+      error_message = if @user.errors.count == 1
+        "1 error prohibited this obj from being saved:"
+      else
+        "#{ @user.errors.count } errors prohibited this book from being saved:"
+      end
+      flash.now[:alert] = error_message
+      render :edit
+    end
   end
 
   private
   def user_params
     params.require(:user).permit(:name, :introduction, :profile_image)
   end
+  
 end

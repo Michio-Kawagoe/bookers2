@@ -1,5 +1,15 @@
-<h1>Users#edit</h1>
-<p>Find me in app/views/users/edit.html.erb</p>
+<% if flash[:alert].present? %>
+  <div class="error-box">
+    <p class="error"><%= flash[:alert] %></p>
+    <% if @user.errors.any? %>
+      <ul>
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>
 
 <h2>User info</h2>
 <%= form_with(model: @user, local: true, html: { multipart: true }) do |f| %>
